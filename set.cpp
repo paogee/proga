@@ -2,83 +2,60 @@
 using namespace std;
 struct Node {
 	int info;
-	Node* next;
+	Node* next;	
 	Node(int data){ info = data; next = NULL; }
 	Node(int data, Node* n){ info = data; next = n; }
 };
-class List{
-public:
-	List() { head = NULL; }
-	~List() {};
-	void push(int val);
-	void pushBack(int i);
-	bool isPresent(int i)const;		
-	void print();
-		
-	List& operator+= (const List &list2); //as concatenation
-	List& operator-= (const List &list2); //as difference
-	List& operator&= (const List &list2); //as intersaction
-//
-	//List* Concatenation(const List *list1, const List *list2);
-	//List* Intersection(const List  *list2);
-	//List* Difference(const List *list2);
-private:
-	Node* head;
-};
 
-void List::push(int info)
-{
-	/* allocate node */
-	Node* newNode = new Node(info, head );
+	Node* Concatenation(Node *list1, Node *list2);
+	Node* Intersection(Node *list1, Node *list2);
+	Node* Difference(Node *list1, Node *list2);
 
-	/* put in the data */
-	//newNode->info = info;
-
-	/* link the old list off the new node */
-	//newNode->next = head;
-
-	/* move the head to point to the new node */
-	head = newNode;
-}
-void List::pushBack(int i)
-{
-	Node* newNode = new Node(i);
-	Node* last = head;
+//};
 	
-	/* If  List is empty,
-	then make the new node as head */
-	if (head == NULL)
+Node* isPresent(Node *n, int data)//check, if set contains data, if yes, return previous element to be used for delete, if needed
+{
+	
+	Node* prev = n;
+	while (n != NULL)
 	{
-		head = newNode;
-		return;
+		if (n->info == data)
+			return prev;
+		prev = n;
+		n = n->next;
 	}
+	return NULL;
+}
 
-	/* Else traverse till the last node */
+Node* push(Node *n, int data)
+{
+	Node* newNode = new Node(data, n);
+	return newNode;
+}
+
+Node* pushBack(Node *n, int data)
+{
+	Node* newNode = new Node(data);	
+	Node* last = n;
+
+	if (n == NULL)
+	{
+		n = newNode;
+		return n;
+	}
 	while (last->next != NULL)
 	{
-		if (last->info == i) //check if value already exists
-			return;
+		if (last->info == data) //check if value already exists
+			return n;
 		last = last->next;
 	}
-	/* Change the next of last node */
 	last->next = newNode;
-	return;
-}
-bool List::isPresent(int info)const
-{
-	Node* l = head;
-	while (l != NULL)
-	{
-		if (l->info == info)
-			return 1;
-		l = l->next;
-	}
-	return 0;
+	return n;
 }
 
-void List::print()
+void print(Node *n)
 {
-	Node* head = this->head;
+	Node* head = n;
 	if (head == NULL) cout << "empty";
 	while (head != NULL)
 	{
@@ -87,150 +64,98 @@ void List::print()
 	}
 	cout << endl;
 }
-//List* List::Concatenation(const List *list1, const List *list2)
-//{
-//	List *result = NULL;
-//	Node *l1 = list1->head, *l2 = list2->head;
-//
-//	// Insert all elements of list1 to the result list 
-//	while (l1 != NULL)
-//	{
-//		pushBack(l1->info);
-//		l1 = l1->next;
-//	}
-//
-//	// Insert those elements of list2 which are not 
-//	// present in result list 
-//	while (l2 != NULL)
-//	{
-//		if (!isPresent(l2->info))
-//			pushBack(l2->info);
-//		l2 = l2->next;
-//	}
-//
-//	return this;
-//}
-List& List::operator += (const List &list2) //Concatenation
-{	
-	Node *l2 = list2.head;
 
+Node* Concatenation(Node *list1, Node *list2) //Concatenation
+{	
+	
+	Node *l2 = list2;
+	
 	while (l2 != NULL)
 	{		
-		pushBack(l2->info);
+		pushBack(list1, l2->info);
 		l2 = l2->next;
 	}
 
-	return *this;
+	return list1;
 }
-//List* List::Intersection(const List *list2)
-//{	
-//	Node* l1 = this->head;	
-//	int i;	
-//	while (l1 != NULL)
-//	{
-//		i = l1->info;
-//		l1 = l1->next;
-//		if (!list2->isPresent(i))	
-//		erase(i);	
-//	}
-//	return this;
-//}
-List& List::operator&= (const List &list2) //Intersection
+
+Node* Intersection(Node *list1, Node *list2) //Intersection
 {
-	Node* l1 = head;
-	Node* prev = NULL;
-	int i;
+	
+	Node* l1 = list1;
+	Node* prev = list1;
+
 	while (l1 != NULL)
-	{
-		i = l1->info;
-		if (list2.isPresent(i))
-			prev = l1;
-		else
+	{		
+		if (isPresent(list2, l1->info) == NULL)
+		{			
+			if (l1 == list1)
+				list1 = l1->next;
 			prev->next = l1->next;
-		l1 = l1->next;
-	}
-	return *this;
-}
-//List* List::Difference(const List *list2)
-//{	
-//	Node* l1 = this->head;
-//	int i;
-//	while (l1 != NULL)
-//	{
-//		i = l1->info;
-//		l1 = l1->next;
-//		if (list2->isPresent(i))
-//		erase(i);
-//	}
-//	return this;
-//}
-List& List::operator-= (const List &list2)//Difference
-{	
-	/*Node* l1 = head;
-	int i;
-	while (l1 != NULL)
-	{
-		i = l1->info;
-		l1 = l1->next;
-		if (list2.isPresent(i))
-		erase(i);
-	}
-	return *this;*/
-	Node* l1 = head;
-	Node* prev = NULL;
-	int i;
-	while (l1 != NULL)
-	{
-		i = l1->info;
-		if (list2.isPresent(i))
-			prev->next = l1->next; 
+		}
 		else
 			prev = l1;
 		l1 = l1->next;
 	}
-	return *this;
+	return list1;
+}
+
+Node* Difference(Node *list1, Node *list2)
+{		
+	Node* l1 = list1;
+	Node* prev = list1;
+	//int i;
+	while (l1 != NULL)
+	{		
+		if (isPresent(list2, l1->info) != NULL)
+		{
+			if (l1 == list1)
+				list1 = l1->next;
+			prev->next = l1->next;			
+		}
+		else
+			prev = l1;
+		l1 = l1->next;
+	}
+	return list1;
 }
 
 
 int main(int argc, char** argv) {
-	List* list1 = new List();
-	List* list2 = new List();
-
-	list1->push(3);
-	list1->push(2);
-	list1->push(1);
-	cout << "First: ";
-	list1->print();
-
-
-	list2->push(1);
-	list2->push(4);
-	list2->push(5);
-	cout << "Second: ";
-	list2->print();
-
-	cout << "Concatenation: ";
-	*list1+=*list2;
-	list1->print();
-	cout << "First: ";
-	list1->print();
-	cout << "Second: ";
-	list2->print();
-	cout << "Intersection: ";
-	*list1&=*list2;
-	list1->print();
-
-	list1->push(7);
-	cout << "First: ";
-	list1->print();
-	cout << "Second: ";
-	list2->print();
-	cout << "Difference: ";
-	*list1-=*list2;
-	list1->print();
+	Node* list1 = new Node(3);
+	Node* list2 = new Node(1);
 	
+	list1 = push(list1,2);
+	list1 = push(list1,1);
+	cout << "First: ";
+	print(list1);
+	
+	list2 = push(list2, 4);
+	list2 = push(list2, 5);
+	cout << "Second: ";
+	print(list2);
+	
+	cout << "Concatenation: ";
+	print(Concatenation(list1, list2));
+	
+	list1 = push(list1, 9);
+	cout << "First: ";
+	print(list1);
+	cout << "Second: ";
+	print(list2);
+	cout << "Intersection: ";
+	print(Intersection(list1, list2));
+	
+	list1 = pushBack(list1, 8);
+	list1 = pushBack(list1, 6);	
+	cout << "First: ";
+	print(list1);
+	cout << "Second: ";
+	print(list2);
+	cout << "Difference: ";
+	print(Difference(list1, list2));
+		
 	system("pause");
 
 	return 0;
 }
-//работать с указателями посредством чего экономить время
