@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+
+
+<head>
+
+<title>   wips   </title> <!-- title in browser tab -->
+
+<link rel="shortcut icon" href="{Favicon}">
+
+
+<!-- font -->
+
+<link href="https://fonts.googleapis.com/css?family=Karla:400,700&amp;subset=latin-ext" rel="stylesheet">
+
+
+<style type="text/css">
+
+
+
+/* general */
+
+body {
+	position: center;
+    font-family: 'Karla', sans-serif; /* font */
+    font-size: 11px; /* text size */
+    letter-spacing: 0.5px; /* space between letters */
+    line-height: 160%; /* space between lines */
+    color: #444; /* text color */
+    background-color: #f7f7f7; /* background color */
+    font-weight: normal;
+    text-decoration: none;
+    text-transform: none;
+    text-align: center;
+    word-wrap: break-word;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+a {
+    color: #717f6e; /* link color */
+    text-decoration: none;
+    -webkit-transition-duration: 0.5s;
+    -moz-transition-duration: 0.5s;
+    -o-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+}
+
+a:hover {
+    color: #23463f; /* link color on hover */
+    text-decoration: none;
+    -webkit-transition-duration: 0.5s;
+    -moz-transition-duration: 0.5s;
+    -o-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+}
+
+.container {
+    -webkit-animation: fadein 4s;
+    -moz-animation: fadein 4s;
+    -ms-animation: fadein 4s;
+    -o-animation: fadein 4s;
+    animation: fadein 4s;
+}
+
+
+/* content */
+
+.content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 30px; /* how curved the corners are */
+    width: 55%; /* width of content box */
+    height: 250px; /* height of content box */
+    padding: 10px; /* space between words and outside of box */
+    background-color: #fff; /* background color of box */
+    
+    z-index: 10;
+}
+
+
+
+
+.button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px; /* how curved the corners are */
+    width: 55%; /* width of content box */
+    height: 15px; /* height of content box */
+    padding: 5px; /* space between words and outside of box */
+    background-color: #ffddcc; /* background color of box */
+    border: 2px solid #722f37;
+   
+}
+
+#button a:hover {
+    color: #717f6e; /* text color of links section on hover */
+    background-color: #eee; /* links section background color of boxes on hover */
+}
+
+a:hover { cursor:url(https://i.imgur.com/ZM41vky.png),progress!important }
+
+
+
+</style>
+
+<body>
+
+<div class="container">
+
+
+<div class="content">
+
+
+<h1 text-align: center>Welcome to the <i>Zelen' Winery</i></h1>
+
+<br>
+<h3>Enter your birth year here, please:
+<select id = "YOB"> 
+</select></h3>
+<br>
+<div class="button", id="proceed"><b>Proceed to the website</b></div>
+
+<script>
+var yr = new Date().getFullYear();
+var years = [];
+for (var i = yr; i >= yr-120; i--) {
+  years.push("<option>" + i.toString() + "</option>")
+}
+document.getElementById("YOB").innerHTML = years.join("");
+
+document.getElementById("proceed").onclick = function(){
+	var e = document.getElementById("YOB");
+	var strUser = e.options[e.selectedIndex].value;
+	if (yr-strUser>=18){
+		window.location.href = "https://myprog-try-pace.tumblr.com/";
+	}
+	else{
+		alert("Sorry the content on this site is inappropriate for you yet! Come back later~")
+	}
+}
+</script>
+</body>
