@@ -1,0 +1,63 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <string>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+using namespace std;
+
+int formGet(string &tmpStr)
+{
+  char* data = getenv("QUERY_STRING");
+  if (data == NULL) {
+    return -1;
+  }
+  tmpStr = string(data);
+  return 0;
+}
+int formPost(string &tmpStr)
+{
+  char* contentLength;
+  int strLength;
+  contentLength = getenv("CONTENT_LENGTH");
+  if (contentLength == NULL)
+    return -1;
+  strLength = atoi(contentLength);
+  if (strLength == 0)
+    return -1;
+  
+  char* data = (char*)malloc(strLength + 1);
+  if (data == NULL)
+    return -1;
+  memset(data, 0, strLength + 1);
+  if (fread(data, 1, strLength, stdin) == 0)
+    return -1;
+  *(data + strLength) = '\0';
+  tmpStr = string(data);
+  return 0;
+}
+int main()
+{
+  string paramStr;
+//______________________choose what method you'd like and comment the other one_____________________________
+ formPost(paramStr);
+//  formGet(paramStr);
+  
+  
+  cout << "Content-type: text/html" << endl << endl;;
+  cout << "<html>" << endl;
+  cout << "<head>" << endl;;
+  cout << "<title> CGI Program - Form processing</title>" << endl;;
+  cout << "</head>";
+  cout << "<body> \n";
+	cout << "<h3>Please fiil out the form below</h3>"<< endl;;
+  cout << "<form method=\"post\" action=\"parser2.cgi\">" << endl; //don't forget tp change the method you're using here as well :)
+  cout << " <label for=\"fname\">First name: <input type=\"text\" name=\"fname\" id=\"fname\"></label><br>" << endl;  
+  cout << " <label for=\"lname\">Last name: <input type=\"text\" name=\"lname\" id=\"lname\"></label><br>" << endl;  
+  cout << " <input type=\"submit\" />" << endl;
+  cout << "</form><br /><br />" << endl;
+  cout << "Param string: " << paramStr << endl;
+  cout << "</body></html>" << endl; 
+  return 0;
+
+}
