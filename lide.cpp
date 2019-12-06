@@ -82,7 +82,7 @@ Cell* cellAlive:: nextGeneration (Field * const startingField)// generating the 
  Cell* cellDead :: nextGeneration (Field * const startingField)// only end firld
  {
  	int n = this->neighboursAlive(startingField); // neugh
- 	
+ 	             
  	if(n == 3)  
  	{
  		
@@ -96,12 +96,13 @@ Cell* cellAlive:: nextGeneration (Field * const startingField)// generating the 
  
  int Cell :: neighboursAlive (Field * f) const// search neigh
  {
- 	int sum = 0, i, j; 
+ 	int sum = 0, i, j;
+	
  	for( i = x-1; i < x+2; i++)
  	{
  		for( j = y-1; j < y+2; j++)
  		{
- 			sum += f->elem(i,j)->isAlive();
+ 			sum +=   f->elem(i,j)->isAlive();
  		}
  	}
 	return sum - f->elem(x,y)->isAlive();
@@ -258,5 +259,4 @@ void Field :: deleteField()
  	f1.deleteField();
  	f2.deleteField();
  }
-
 
