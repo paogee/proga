@@ -18,6 +18,7 @@ public:
 	node* getHead() const;  //returns head
 	int empty() const;	//check if empty
 	void addHead(char* key, char* value);	//add head
+	//void addHead(const char* key, const char* value);
 	node* addElem(node* n, const char* key, const char* value); // add elem to listf
 	void print(); 
 private:
@@ -104,7 +105,37 @@ int main() {
 	cout << "</html>\n";
 	return 0;
 }
+/*
+parser::parser() {
+	int i = 0;
+	char value[100]; //áóôåð äëÿ çíà÷åíèÿ
+	char key[100];  //áóôåð äëÿ êëþ÷à
+	char* temp = key; //ïåðåìåííàÿ äëÿ èçìåíåíèÿ êóäà çàïèñûâàòü
+	char * str = query();
 
+	while (str[i] != '\0' && list.empty()) {
+		switch (str[i]) {
+		case '=':
+			*temp = '\0';
+			temp = value;
+			break;
+		case '&':
+			*temp = '\0';
+			temp = key;
+			list.addHead(key, value);
+			break;
+		case '+':
+			*temp = ' ';
+			temp++;
+			break;
+		default:
+			*temp = str[i];
+			temp++;
+			break;
+		}
+		i++;
+	}
+*/
 
 Parser::Parser() {
 	int i = 0;
@@ -208,7 +239,7 @@ int List::empty() const
 }
 
 
-void List::addHead(char * key, char * value)
+void List::addHead(char * key, char * value)//void List::addHead(const char * key, const char * value)
 {
 	head = new node;
 	head->key = new char(strlen(head->key) + 1);
