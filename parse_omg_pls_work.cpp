@@ -11,16 +11,16 @@ public:
 	List() { head = NULL; };
 	~List();
 	struct node {//our pair of values
-		char* key;	 //key
+		char* key;	 //key	
 		char* value; //value
-		node *ptrNext;  //ptrNext ptr
+		node *next;  //pointer to the next
 	};
-	node* getHead() const;  //returns head
+	node* getHead() const;  //returns us the head of the list
 	int empty() const;	//check if empty
-	void addHead(char* key, char* value);	//add head
+	void addHead(char* key, char* value);	//adding the head
 	//void addHead(const char* key, const char* value);
-	node* addElem(node* n, const char* key, const char* value); // add elem to listf
-	void print(); 
+	node* insert(node* n, const char* key, const char* value); // add elem to list
+	void print(); //printing the reslut
 private:
 	node* head; 
 };
@@ -28,20 +28,20 @@ private:
 
 
 
-class Parser {
+class parser {
 public:
-	Parser(); //Parser
+	parser(); //parser
 	void printTable(); //table output
 private:
 	char *query();
 	char *get();
 	char *post();
-	List list; //list
+	List list; //our list
 };
 
 
 
-char* Parser::post() { //func returning our url if using POST method
+char* parser::post() { ///func returning our url if using POST method
 	char* str = getenv("CONTENT_LENGTH");
 	int size = atoi(str);
 	char* url = new char[size + 1];
@@ -51,18 +51,20 @@ char* Parser::post() { //func returning our url if using POST method
 }
 
 
-char* Parser::get() { //func returning our url if using GET method
+char* parser::get() { //func returning our url if using GET method
 	char* str = getenv("QUERY_STRING");
 	int size = strlen(str);
+	if(size > 500)//limiting the mem allocation up to 500 symb
+		return NULL; 
 	char* url = new char[size + 1];
 	strcpy(url, str);
 	return url;
 }
 
 
-char* Parser::query() { //method checking query
+char* parser::query() { //method checking query
 	char * method = getenv("REQUEST_METHOD");
-	if (strcmp(method, "GET") == 0) //calls post func if value GET
+	if (strcmp(method, "GET") == 0) //calls get func if value GET
 		return get();
 	if (strcmp(method, "POST") == 0) //calls post func if value POST
 		return post();
@@ -70,7 +72,7 @@ char* Parser::query() { //method checking query
 
 
 
-char decode(const char* str) {	//decoder
+char decode(const char* str) {	//decoding
 	char a = *str;	//1st sym after %
 	char b = *(str + 1);	//2nd sym after%
 	char c; 
@@ -94,7 +96,8 @@ char decode(const char* str) {	//decoder
 
 int main() {
 	cout << "Content-type:text/html \n\n";
-	Parser p;
+	parser p;
+
 	cout << "<html>\n";
 	cout << "<head>\n";
 	cout << "<title> Profile info</title>\n";
@@ -103,47 +106,26 @@ int main() {
 	p.printTable();
 	cout << "</body>\n";
 	cout << "</html>\n";
+	//system("pause");
 	return 0;
 }
-/*
+
+
 parser::parser() {
-	int i = 0;
-	char value[100]; //áóôåð äëÿ çíà÷åíèÿ
-	char key[100];  //áóôåð äëÿ êëþ÷à
-	char* temp = key; //ïåðåìåííàÿ äëÿ èçìåíåíèÿ êóäà çàïèñûâàòü
-	char * str = query();
-
-	while (str[i] != '\0' && list.empty()) {
-		switch (str[i]) {
-		case '=':
-			*temp = '\0';
-			temp = value;
-			break;
-		case '&':
-			*temp = '\0';
-			temp = key;
-			list.addHead(key, value);
-			break;
-		case '+':
-			*temp = ' ';
-			temp++;
-			break;
-		default:
-			*temp = str[i];
-			temp++;
-			break;
-		}
-		i++;
-	}
-*/
-
-Parser::Parser() {
 	int i = 0;
 	char value[100]; //value buffer
 	char key[100];  //key buffer
-	char* temp = key; //temporary variable
+	char* temp = key; //temporay variable
 	char * str = query();
 	
+	
+	if(str == NULL){
+		cout << "Sorry, we cannot handle the request :( <br>\n";
+		return;
+	}
+	
+	char c;
+
 	while (str[i] != '\0' && list.empty()) {
 		switch (str[i]) {
 		case '=':
@@ -160,70 +142,78 @@ Parser::Parser() {
 			temp++;
 			break;
 		case '%':
-		{
-			char c = decode(str + i + 1);
+			c = decode(str + i + 1);
 			*temp = c;
 			temp++;
 			i += 2;
 			break;
-		}
 		default:
 			*temp = str[i];
 			temp++;
-			break;
-		}
-		i++;
-
-	}
-
-	List::node* pointer =list.getHead();
-
-	while (str[i] != '\0') {
-		switch (str[i]) {
-		case '=':
-			*temp = '\0';
-			temp = value;
-			break;
-		case '&':
-			*temp = '\0';
-			temp = key;
-			pointer=list.addElem(pointer,key, value);
-			break;
-		case '+':
-			*temp = ' ';
-			temp++;
-			break;
-		case '%':
-		{
-			char c = decode(str + i + 1);
-			*temp = c;
-			temp++;
-			i += 2;
-			break;
-		}
-		default:
-			
-			*temp = str[i];
-			temp++;
-			break;
 		}
 		i++;
 	}
-	*temp = '\0';
-	pointer = list.addElem(pointer, key, value);
+	
+	if(list.empty()){
+		*temp = '\0';
+		list.addHead(key, value);
+	}else{
+		
+		List::node* pointer =list.getHead();
+	
+		while (str[i] != '\0') {
+			switch (str[i]) {
+			case '=':
+				*temp = '\0';
+				temp = value;
+				break;
+			case '&':
+				*temp = '\0';
+				temp = key;
+				pointer=list.insert(pointer,key, value);
+				break;
+			case '+':
+				*temp = ' ';
+				temp++;
+				break;
+			case '%':
+				c = decode(str + i + 1);
+				*temp = c;
+				temp++;
+				i += 2;
+				break;
+			default:
+				*temp = str[i];
+				temp++;
+			}
+			i++;
+		}
+		*temp = '\0';
+		pointer = list.insert(pointer, key, value);
+	}
 	delete str;
 }
 
-
 List::~List()
 {
-	node* prev = head;
-	node* current = prev->ptrNext;
-	while (current != NULL) {
-		delete prev;
-		prev = current;
-		current=current->ptrNext;
+	if(head != NULL){
+		node* prev = head;
+		node* current = prev->next;
+		if(current == NULL){
+			delete prev->key;
+			delete prev->value;
+			delete prev;
+		}else{
+			while (current != NULL) {
+				delete prev->key;
+				delete prev->value;
+				delete prev;
+				prev = current;
+				current=current->next;
+			}	
+		}
 	}
+	
 }
 
 
@@ -239,22 +229,24 @@ int List::empty() const
 }
 
 
-void List::addHead(char * key, char * value)//void List::addHead(const char * key, const char * value)
+void List::addHead(char * key, char * value)//adding the head
 {
 	head = new node;
 	head->key = new char(strlen(head->key) + 1);
 	head->value = new char(strlen(head->value) + 1);
+	head->next = NULL;
 	head->key = strcpy(head->key, key);
 	head->value = strcpy(head->value, value);
 }
 
 
 
-List::node* List::addElem(node* n, const char* key, const char* value) {//elem add to list ,returns ptrNext to know the inserting index
-	n->ptrNext = new node;
-	n = n->ptrNext;
+List::node* List::insert(node* n, const char* key, const char* value) {//elem add to list ,returns ptrNext to know the inserting index
+	n->next = new node;
+	n = n->next;
 	n->key = new char[strlen(key) + 1];
 	n->value = new char[strlen(value) + 1];
+	n->next = NULL;
 	strcpy(n->key, key);
 	strcpy(n->value, value);
 	return n;
@@ -269,27 +261,27 @@ void List::print() {
 		node* current = head;
 		while (current != NULL) {
 			cout << current->key << "  " << current->value << endl;
-			current = current->ptrNext;
+			current = current->next;
 		}
 	}
 }
 
 
 
-void Parser::printTable()
+void parser::printTable()
 {
 	List::node* current=list.getHead();
 	cout << "<table border=\"1\">\n";
 	while(current!=NULL){
-		cout << "<tr>\n";
-		cout << "<td>\n";
+		cout << "<tr> \n";
+		cout << "<td> \n";
 		cout << current->key;
-		cout << "</td>\n";
-		cout << "<td>\n";
+		cout << "</td> \n";
+		cout << "<td> \n";
 		cout << current->value;
-		cout << "</td>\n";
-		cout << "</tr\n";
-		current=current->ptrNext;
+		cout << "</td> \n";
+		cout << "</tr> \n";
+		current=current->next;
 	}
-	cout << "</table>\n";
+	cout << "</table> \n";
 }
